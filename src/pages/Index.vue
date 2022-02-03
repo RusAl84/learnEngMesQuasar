@@ -50,7 +50,7 @@ import { computed, defineComponent } from "vue";
 import { useStore } from 'vuex'
 import API from "../api/api.js";
 
-export default {
+export default defineComponent({
   name: 'IndexPage',
   setup () {
     const $store = useStore()
@@ -86,16 +86,17 @@ export default {
     })
     return {
       $store, userName, messages, intervalCtx, lastMsgID,  messageText,
-
     }
   },
-  mounted() {
+ async mounted() {
     // this.userName = "Login";
     this.intervalCtx = setInterval(async () => {
       try {
         const msg = await API.getMessage(this.lastMsgID);
+        console.log(msg)
         if (typeof msg === typeof {}) {
           this.messages=msg
+          console.log(msg)
           this.lastMsgID++
         }
       } catch (e) {}
@@ -107,24 +108,16 @@ export default {
   methods: {
     // Реакция на кнопку отправки
     async onSendClick() {
-      // на бекэнде
       try {
         await API.sendMessage(this.userName, this.messageText);
         console.log("cleared");
-        this.message = "";
+        this.messageText = "";
       } catch (e) {
         console.error(e);
       }
-      //на фронте
-      // var currenttime = new Date()
-      // this.messages={
-      //   UserName: this.userName,
-      //   MessageText: this.messageText,
-      //   TimeStamp: currenttime.getHours() + ":" + currenttime.getMinutes() + ":" + currenttime.getSeconds()
-      // }
     },
   },
-}
+})
 </script>
 <style scoped >
 .flex-container {
